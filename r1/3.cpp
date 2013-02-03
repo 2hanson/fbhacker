@@ -119,6 +119,7 @@ void output(int tid)
 
 void work()
 {
+    cout<<"ans = "<<ans<<endl;
     test_ps();
     int flag = 1;
     for (int num = 1; num <= ps.size(); ++num)
@@ -152,10 +153,12 @@ void work()
             }
             //leftx, rightx;
             //upy, downy;
-            //x:max(0, rightx-p+1) -- min(w-1, leftx + p-1);
-            //y:max(0, downy-q+1) -- min(h-1, upy+q-1)
-        
-            ans += flag*( (1+min(w-1, leftx+p-1)-max(0, rightx-p+1)) * (1+min(h-1, upy+q-1)-max(0, downy-q+1)) );
+            //x:max(0, rightx-p+1) -- min(w-p+1, leftx + p-1);
+            //y:max(h-q+1, downy-q+1) -- min(h-1, upy+q-1)
+             
+            //ans = (w-p+1)*(h-q+1);
+           
+            ans += flag*( (1+min(w-p+1, leftx+p-1)-max(0, rightx-p+1)) * (1+min(h-1, upy+q-1)-max(h-q+1, downy-q+1)) );
             cout<<"ans = "<<ans<<endl;
         }
     }
