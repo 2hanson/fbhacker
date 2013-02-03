@@ -47,8 +47,8 @@ vector<LL> A;
 
 int main()
 {
-    freopen("1.txt", "r", stdin);
-    freopen("out.txt", "w", stdout);
+    //freopen("in.txt", "r", stdin);
+    //freopen("out.txt", "w", stdout);
 
     int testCase;
     scanf("%d", &testCase);
