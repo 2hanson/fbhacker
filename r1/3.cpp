@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string.h>
 using namespace std;
 
 int w, h, p, q;
@@ -22,6 +23,7 @@ class P
 
 vector<P*> deadps;
 vector<P*> ps;
+vector<P*> rec;
 
 void test_deadps()
 {
@@ -39,10 +41,10 @@ void read()
 
 void init()
 {
+    rec.clear();
     //should rethink
     //x: 0 -- (w-p)
-    //y: (q-1) -- (h-1)
-
+    //y: 0 -- (h-q)
     ans = (w-p+1)*(h-q+1);
 }
 
@@ -117,57 +119,52 @@ void output(int tid)
     cout<<"Case #"<<tid<<": "<<ans<<endl;
 }
 
-void work()
+bool isHave(int tx, int ty)
 {
-    cout<<"ans = "<<ans<<endl;
-    test_ps();
-    int flag = 1;
-    for (int num = 1; num <= ps.size(); ++num)
+    for (int i = 0; i < rec.size(); ++i)
     {
-        flag *= -1;
-        for (int k = 0; k < ps.size(); k += num)
+        if (rec[i]->x == tx && rec[i]->y==ty)
         {
-            int leftx = ps[k]->x;
-            int rightx = ps[k]->x;
-            int upy = ps[k]->y;
-            int downy = ps[k]->y;
-
-            for (int tk = k + 1; tk < (k+num) && tk<ps.size(); ++tk)
-            {
-                if (ps[tk]->x < leftx)
-                {
-                    leftx = ps[tk]->x;
-                }
-                if (ps[tk]->x > rightx)
-                {
-                    rightx = ps[tk]->x;
-                }
-                if (ps[tk]->y < upy)
-                {
-                    upy = ps[tk]->y;
-                }
-                if (ps[tk]->y > downy)
-                {
-                    downy = ps[tk]->y;
-                }
-            }
-            //leftx, rightx;
-            //upy, downy;
-            //x:max(0, rightx-p+1) -- min(w-p+1, leftx + p-1);
-            //y:max(h-q+1, downy-q+1) -- min(h-1, upy+q-1)
-             
-            //ans = (w-p+1)*(h-q+1);
-           
-            ans += flag*( (1+min(w-p+1, leftx+p-1)-max(0, rightx-p+1)) * (1+min(h-1, upy+q-1)-max(h-q+1, downy-q+1)) );
-            cout<<"ans = "<<ans<<endl;
+            return true;
         }
     }
+
+    return false;
+}
+
+void work()
+{
+    P* temp;
+        for (int k = 0; k < ps.size(); ++k)
+        {
+            int tempx = ps[k]->x;
+            int tempy = ps[k]->y;
+
+            //leftx, rightx;
+            //upy, downy;
+            //x:max(0, rightx-p+1) -- min(w-p, leftx + p-1);
+            //y:max(q-1, downy-q+1) -- min(h-1, upy+q-1)
+            //x: 0 -- (w-p)
+            //y: 0 -- (h-q)
+            for (int tx = max(0, tempx-p+1); tx <= min(w-p, tempx); ++tx)
+            {
+                for (int ty = max(0, tempy-q+1); ty <= min(h-q, tempy); ++ty)
+                {
+                    if (isHave(tx, ty) == false/*rec[tx][ty] == 0*/)
+                    {
+                        --ans;
+                        temp = new P(tx, ty);                   
+                        rec.push_back(temp);
+                    }
+                }
+            }
+        }
 }
 
 int main()
 {
-    //freopen("3.txt", "r", stdin);
-    //freopen("out.txt", "w", stdout);
+    freopen("3.txt", "r", stdin);
+    freopen("out.txt", "w", stdout);
     int test;
     scanf("%d", &test);
     for (int tid = 1; tid<=test; ++tid)
@@ -176,11 +173,9 @@ int main()
         //sory by x, y and no dup
         make_dead_p();
         init();
-        
         work();
         output(tid);
     }
-
     return 0;
 }
 
